@@ -1,0 +1,70 @@
+README
+
+NAME: MICHAEL (JIASHU) ZHOU
+EMAIL: mzjs96@gmail.com
+ID: 804 663 317
+
+
+This is a README file with identification information, a description of the included files, the smoke-test cases in the check target, and any other information about Project 0 of CS111 Spring 2018.
+
+lab0.c:
+	This is the source file. The program reads and writes to the specified sources (--input and --output). The reading is done by byte and byte. The program performs a segmentation fault by dereferencing a null pointer. Also the program implemented catch option that uses the signal API to catch the SIGSEGV signal.
+
+
+	The options are listed as follow:
+
+	--input=filename ... use the specified file as standard input (making it the new fd0). 
+	If you are unable to open the specified input file, report the failure (on stderr, file descriptor 2) using fprintf(3), and exit(2) with a return code of 2.
+	--output=filename ... create the specified file and use it as standard output (making it the new fd1). 
+	If you are unable to create the specified output file, report the failure (on stderr, file descriptor 2) using fprintf(3), and exit(2) with a return code of 3.
+	--segfault ... force a segmentation fault (e.g., by calling a subroutine that sets a char * pointer to NULL and then stores through the null pointer). If this argument is specified, do it immediately, and do not copy from stdin to stdout.
+	--catch ... use signal(2) to register a SIGSEGV handler that catches the segmentation fault, logs an error message (on stderr, file descriptor 2) and exit(2) with a return code of 4.
+
+Makefile:
+	check:
+		Runs a smoke-test in the following sequences:
+			default creatTest writeTest segfaultTest trivialTest exit0test cmpTest
+	dist:
+		Compresses the files into .tar for grading.
+	clean:
+		Removes all the tar file and txt files.
+	default:
+		Compiles lab0.c with the GCC compiler.
+	creatTest:
+		Checks if the input file cannot be opened.
+	writeTest:
+		Check if the program exits properly with the correct code when the file cannot be written.
+	segfaultTest:
+		Checks if the program catches the SIGSEGV signal.
+	trivialTest:
+		Checks if the program handles correct input arguments correctly.
+	exit0test:
+		Checks if the input output files are correctly read and write and exit zero.
+	cmpTest:
+		Compares whether the read and write files are the same.
+
+backtrace.png:
+	Screenshot taken when run the program in GDB with --segfault, and backtrace with command: bt to examine the stack.
+
+breakpoint.png:
+	Screenshot taken when a breakpoint is set in GDB at the line of dereferencing the null pointer in the source code, and attempt to access the memroy /check the address of the pointer.
+
+Research & reference:
+	Usage of getopt_long:
+		https://www.gnu.org/software/libc/manual/html_node/Getopt-Long-Options.html
+		https://www.gnu.org/software/libc/manual/html_node/Getopt-Long-Option-Example.html
+		https://www.gnu.org/software/libc/manual/html_node/Getopt-Long-Option-Example.html
+	Linux signals:
+		http://www.comptechdoc.org/os/linux/programming/linux_pgsignals.html
+	Stderr:
+		http://www.comptechdoc.org/os/linux/programming/linux_pgsignals.html
+	Miscellaneous:
+		http://man7.org/linux/man-pages/man2/read.2.html
+		http://man7.org/linux/man-pages/man2/write.2.html
+		https://web.cs.ucla.edu/classes/spring18/cs111/projects/fd_juggling.html
+		https://unix.stackexchange.com/questions/134018/does-linux-allow-executing-the-rm-rf-command
+
+
+
+
+
