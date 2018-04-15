@@ -13,7 +13,7 @@ check: default creatTest writeTest segfaultTest trivialTest exit0test cmpTest
 clean:
 	rm -f lab0 *.txt *.tar.gz
 dist:
-	tar -cvzf lab0-804663317.tar.gz Makefile lab0.c backtrace.png breakpoint.png README
+	tar -cvzf lab0-XXXXXXXXX.tar.gz Makefile lab0.c backtrace.png breakpoint.png README
 
 #smoke tests
 creatTest:
