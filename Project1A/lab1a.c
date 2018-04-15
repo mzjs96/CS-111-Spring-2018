@@ -27,7 +27,7 @@ void set_input_mode (void)
 	/* this process Make sure stdin is a terminal. */
 	if(!isatty(STDIN_FILENO))
 	{
-		fprintf(stderr, "Not a terminal.\n", );
+		fprintf(stderr, "Not a terminal.\n");
 		exit(EXIT_FAILURE);
 	}
 
@@ -38,10 +38,10 @@ void set_input_mode (void)
 
 	struct termios tattr;
 
-	tcgetattr (0, &attr);
+	tcgetattr (0, &tattr);
 	tattr.c_iflag = ISTRIP;	//only lower 7 bits
 	tattr.c_oflag = 0; //no processing
-	tattr.c_;flag = 0; //no processing
+	tattr.c_lflag = 0; //no processing
 
 	tattr.c_cc[VMIN] = 1;
 	tattr.c_cc[VTIME] = 0;
@@ -79,13 +79,13 @@ int main (int argc, char* argv[])
 		switch(opt)
 		{
 			case 's':
-				is_shell = 1;
-				break;
+			is_shell = 1;
+			break;
 			default:
-				printf ("Unrecognize argument\n");
-				fprintf (stderr, "getopt generated unrecognized character code: %d\n", opt)
-				exit(1);
-				break;
+			printf ("Unrecognize argument\n");
+			fprintf (stderr, "getopt generated unrecognized character code: %d\n", opt);
+			exit(1);
+			break;
 		}
 	}
 
@@ -160,7 +160,7 @@ int main (int argc, char* argv[])
 			fprintf(stderr, "pipe() failed! Error: %s\n", strerror(errno));
 			exit(1);
 		}
-	
+
 		struct pollfd pfd[2];
 		/*
 		 	Poll waits for one of a set of file descriptors to become ready to perform I/O.
@@ -293,7 +293,7 @@ int main (int argc, char* argv[])
 						}
 					}
 
-					if (pfd[0].revents & (POLLERR + POLLHUP))
+					if ( pfd[0].revents & (POLLERR + POLLHUP))
 					{
 						close (from_child_pipe[0]);
 						exit(0);
@@ -313,7 +313,7 @@ int main (int argc, char* argv[])
 							p_signal = WTERMSIG(status);
 						}
 
-						fprintf(stderr, "SHELL EXIT SIGNAL = %d STATUS= %d \r\n", p_signal, p_status);
+						fprintf(stderr, "SHELL EXIT SIGNAL=%d STATUS=%d\r\n", p_signal, p_status);
 
 						exit(0);
 					}
@@ -325,31 +325,32 @@ int main (int argc, char* argv[])
 					exit(1);
 				}
 			}
-			else if(child_pid == 0)	//child
-			{
-				close(to_child_pipe[1]);
-				close(from_child_pipe[0]);
-				dup2(to_child_pipe[0], STDIN_FILENO);
-				dup2(from_child_pipe[1], STDOUT_FILENO);
-				dup2(from_child_pipe[1], STDERR_FILENO);
-				close(to_child_pipe[0]);
-				close(from_child_pipe[1]);
+		}
+		else if(child_pid == 0)	//child
+		{
+			close(to_child_pipe[1]);
+			close(from_child_pipe[0]);
+			dup2(to_child_pipe[0], STDIN_FILENO);
+			dup2(from_child_pipe[1], STDOUT_FILENO);
+			dup2(from_child_pipe[1], STDERR_FILENO);
+			close(to_child_pipe[0]);
+			close(from_child_pipe[1]);
 
-				char *execvp_argv[2];
-				char execvp_filename[] = "/bin/bash";
-				execvp_argv[0] = execvp_filename;
-				execvp_argv[1] = NULL;
-				if (execvp(execvp_filename, execvp_argv) == -1)
-				{
-					fprintf(stderr, "execvp() failed! Error: %s\n", strerror(errno));
-					exit(1);
-				}
-			}
-			else
+			char *execvp_argv[2];
+			char execvp_filename[] = "/bin/bash";
+			execvp_argv[0] = execvp_filename;
+			execvp_argv[1] = NULL;
+			if (execvp(execvp_filename, execvp_argv) == -1)
 			{
-				fprintf(stderr, "fork() failed! Error: %s\n", strerror(errno));
+				fprintf(stderr, "execvp() failed! Error: %s\n", strerror(errno));
 				exit(1);
 			}
+		}
+		else
+		{
+			fprintf(stderr, "fork() failed! Error: %s\n", strerror(errno));
+			exit(1);
+		}
 	}
 }
 
