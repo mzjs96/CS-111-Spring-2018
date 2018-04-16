@@ -1,0 +1,52 @@
+NAME: MICHAEL ZHOU
+EMAIL: mzjs96@gmail.com
+ID: 804663317
+
+
+This is a README file with identification information, a description of the included files, and references about Project 1A of CS111 Spring 2018.
+/* Many thanks to the legendary TA Zhaoxing Bu for providing explanations on sample code and awesome discussion section. */
+
+lab0.c:
+	This is the source file of project 1A. This project gives us hands on practice on setting up non-canionical input mode, pipes between the terminal and the shell and interprocess communication. The compiled program allows us to read and write between shell and terminal from both directions. 
+
+	The options are listed as follow:
+
+		default (no option): Character-at-a-time, full duplex terminal I/O. 
+
+		--shell: Mode that passes input/output between the terminal and a shell
+
+		--debug: for debugging purpuses when develping (this portion has been commented out/removed)
+
+Makefile:
+	dist:
+		Compresses the files into .tar for grading.
+	clean:
+		Removes all the tar file and txt files.
+	default:
+		Compiles lab0.c with the GCC compiler under C99 mode
+
+Research & reference:
+	Usage of poll:
+		http://man7.org/linux/man-pages/man2/poll.2.html
+	Usage of sys wait:
+		http://pubs.opengroup.org/onlinepubs/007904975/basedefs/sys/wait.h.html
+	Usage of Termios.h:
+		http://pubs.opengroup.org/onlinepubs/7908799/xsh/termios.h.html
+	Non-canonical input processing:
+		https://www.tldp.org/HOWTO/Serial-Programming-HOWTO/x115.html
+	Non-canonical example:
+		https://www.gnu.org/software/libc/manual/html_node/Noncanon-Example.html
+	Mode functions:
+		https://www.gnu.org/software/libc/manual/html_node/Mode-Functions.html
+	Control code reference:
+		https://en.wikipedia.org/wiki/C0_and_C1_control_codes
+	Caninical vs Non-canonical:
+		https://ftp.gnu.org/old-gnu/Manuals/glibc-2.2.3/html_chapter/libc_17.html#SEC356
+	Waitpid example:
+		https://linux.die.net/man/2/waitpid
+	Creating pipe in C:
+		http://tldp.org/LDP/lpg/node11.html
+
+
+
+
