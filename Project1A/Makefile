@@ -1,5 +1,5 @@
 #Name: Michael Zhou
-#UID: 804 663 317
+#UID:
 
 default:
 	gcc -D_POSIX_C_SOURCE -Wall -Wextra -g -std=c99 -o lab1a lab1a.c
