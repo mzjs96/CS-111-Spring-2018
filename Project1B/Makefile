@@ -3,7 +3,7 @@
 default: server client
 
 server:
-	gcc -Wall -Wextra lab1b-server.c -o lab1b-server -lz -std=c99
+	gcc -Wall -Wextra -D_POSIX_C_SOURCE lab1b-server.c -o lab1b-server -lz -std=c99
 
 client:
 	gcc -Wall -Wextra lab1b-client.c -o lab1b-client -lz

@@ -1,0 +1,49 @@
+README
+
+NAME: MICHAEL ZHOU
+EMAIL: mzjs96@gmail.com
+ID: 804663317
+
+SLIPDAYS: 1day
+
+This is a README file with identification information, a description of the included files, debugging process when making this project, and references about Project 1B of CS111 Spring 2018.
+
+Description of included files:
+
+lab1b-server.c
+This is the source file of server. Separate process is forked from shell and the server and TCP socket is set up for connection with the client. Inputs from the client are sent through TCP connection and piped to the shell. 
+
+	Options:
+		--port=#port 	defines which port number to connect
+		--compress	data being sent is compressed for efficiency
+
+Lab1b-client.c
+This is the source file of the client. The client sets up TCP socket and connect to the server. The port number needs to be specified and should be matched up with that of the server to set up connection correctly.
+
+	Options:
+		--port=#port 	defines which port number to connect
+		--compress	data being sent is compressed for efficiency
+		--log=#logfile	the log option will maintain a log file to record data being sent or received
+
+Makefile:
+	dist:
+		Compresses the files into .tar for grading.
+	clean:
+		Removes all the tar file and txt files.
+	default:
+		Compiles lab1b-client.c and lab1b-server.c with the GCC compiler under -Wall -Wextra C99 mode.
+
+
+Debug process:
+The debug process of this project was difficult. I spent so much time trying to figure out orphan processes error(operation not permitted) and it turns out that the pipe between the server and the shell was incorrectly implemented.
+I was unable to find out this mistake until I made several trials attempting to set up connections correctly through localhost testing.
+
+References:
+Use of unix sockets:
+	https://www.tutorialspoint.com/unix_sockets/socket_client_example.htm
+Memcpy:
+	https://www.tutorialspoint.com/c_standard_library/c_function_memcpy.htm
+Sys wait:
+	http://pubs.opengroup.org/onlinepubs/007904975/basedefs/sys/wait.h.html
+Creating pipe in C:
+	http://tldp.org/LDP/lpg/node11.html
