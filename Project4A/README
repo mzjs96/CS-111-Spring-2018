@@ -1,0 +1,25 @@
+NAME: MICHAEL ZHOU
+EMAIL: mzjs96@gmail.com
+ID: 
+
+BeagleBone Serial Number: BBGW17090111
+MAC Address: 2c:f7:f1:06:69:ef
+
+This is a README file containing the tarball file description regarding to Project4A submission.
+
+Included files and Description:
+
+my_beaglebone.jpg: 
+	Picture of my selfie with the working beaglebone connected to my MacBook.
+
+git.png: 
+	Screenshot of installing git and using git clone command.
+
+build_run.png: 
+	Screenshot of WIFI beaglebone session that build and run hello world program.
+
+connected.png: 
+	Screenshot USB terminal command session connected to your system. Showing hostname and ifconfig information.
+
+copy.png: 
+	Screenshot of SCP command from bash is used to copy helloworld.c source code from the MacBook to Beaglebone WIFI session.
