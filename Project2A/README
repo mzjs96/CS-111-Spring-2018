@@ -1,0 +1,102 @@
+NAME: MICHAEL ZHOU
+EMAIL: mzjs96@gmail.com
+ID: 804663317
+
+SLIPDAYS: #1
+
+This is a README file containing the information for CS111 Spring 2018 Project 2A. It includes descriptions of each of the included files, answered questions to the spec, and references that helps me to finish the project.
+
+The tarball contains:
+
+lab2_add.c: This is the C source program that implements and tests a shared variable add function, implements the command line options, and produces the specified output statistics.
+
+SortedList.h: a header file describing the interfaces for linked list operations.
+
+SortedList.c: a C module that implements insert, delete, lookup, and length methods for a sorted doubly linked list.
+
+lab2_list.c: a C program that implements the specified command line options and produces the specified output statistics.
+
+Makefile:
+	build	compile all programs 
+	tests	 run all (over 200) specified test cases to generate results in CSV files. 
+	graphs	use gnuplot(1) and the supplied data reduction scripts to generate the required graphs
+	dist	create the deliverable tarball
+	clean	delete all programs and output created by the Makefile
+
+lab2_add.csv	 containing all of results for all of the Part-1 tests.
+lab2_list.csv    containing all of results for all of the Part-2 tests.
+
+lab2_add-1.png ... threads and iterations required to generate a failure (with and without yields)
+lab2_add-2.png ... average time per operation with and without yields.
+lab2_add-3.png ... average time per (single threaded) operation vs. the number of iterations.
+lab2_add-4.png ... threads and iterations that can run successfully with yields under each of the synchronization options.
+lab2_add-5.png ... average time per (protected) operation vs. the number of threads.
+
+lab2_list-1.png ... average time per (single threaded) unprotected operation vs. number of iterations (illustrating the correction of the per-operation cost for the list length).
+lab2_list-2.png ... threads and iterations required to generate a failure (with and without yields).
+lab2_list-3.png ... iterations that can run (protected) without failure.
+lab2_list-4.png ... (length-adjusted) cost per operation vs the number of threads for the various synchronization options.
+
+test.sh: test script file that contains all 200+ cases to produce data
+
+
+QUESTION 2.1.1 - causing conflicts:
+Why does it take many iterations before errors are seen?
+	Creating a new thread requires system call. It is time consuming an it's much more  complicated than the add function. If the number of iteration is small, the multithread will be less likely to fail because essentially all the add iterations will end before new threads are being created. Therefore, a larger number of iteration will be more likely to cause error.
+
+Why does a significantly smaller number of iterations so seldom fail?
+	As being said, creating a new thread requires a system call, which time consuming and causes lots of resources. The smaller iteration will be less likely to fail because add iteration takes less time to finish, and essentially all the add function iterations will end before new threads are created.
+
+QUESTION 2.1.2 - cost of yielding:
+Why are the --yield runs so much slower?
+	Yield runs are so much slower, because yielding requires system calls that forces the thread to relinquish the CPU and operate context switch. The time cost for yielding is much more than the total running time, which explains why yield runs so much slower.
+
+Where is the additional time going?
+	The additional time goes into expensive context switches for yielding the CPU.
+
+Is it possible to get valid per-operation timings if we are using the --yield option?
+If so, explain how. If not, explain why not.
+	No, it is not possible, because we only measured wall time in our project. However, there may be multiple threads running at the same time, and we are unable to get the accurate per-operation time.
+
+QUESTION 2.1.3 - measurement errors:
+Why does the average cost per operation drop with increasing iterations?
+	The cost of creating threads is expensive. If we take the average of costs per operation, having more iterations will even out the cost of thread creation. Thus, the average cost per operation will drop accordingly.
+
+If the cost per iteration is a function of the number of iterations, how do we know how many iterations to run (or what the "correct" cost is)?
+	To find the correct cost, find the curve on the graph and trace through until where the curve start to get flat and stable. The point where it starts to get stable corresponding the number of iterations is the optimal iteration to run.
+
+QUESTION 2.2.1 - scalability of Mutex
+Compare the variation in time per mutex-protected operation vs the number of threads in Part-1 (adds) and Part-2 (sorted lists).
+	Both time of operation increase as the number of threads increases and then as it gets more it start to get more flat.
+
+Comment on the general shapes of the curves, and explain why they have this shape.
+	Both curves seem to level off and start to get even as the number of threads increases. This is caused by the increase of the amount of time waiting for the mutex lock as race conditions happen. However, at a certain point, this increase in overhead start to become less significant, and per-operation will be even out by the average. Therefore, adding more threads does not impact as much as the curve goes on.
+
+Comment on the relative rates of increase and differences in the shapes of the curves, and offer an explanation for these differences.
+	The operations in list is much more expensive and complicated than operations in add, so the rate of increase in time is greater. The curve start to even and become flat at a certain point because there are more threads running.
+
+QUESTION 2.2.2 - scalability of spin locks
+Compare the variation in time per protected operation vs the number of threads for list operations protected by Mutex vs Spin locks. 
+	Both curves first keep going up. However, mutex curve levels off and decrease in increase rate. Spin lock continues to increase directly as a function of the number of threads.
+
+Comment on the general shapes of the curves, and explain why they have this shape.
+	When the number of threads rises, more threads are competing for a
+single lock, which increases the costs of both mechanisms. In the beginning, the spin lock is cheaper in terms of time per operation, but at a certain point, it passes mutex as the thread number increases.
+
+Comment on the relative rates of increase and differences in the shapes of the curves, and offer an explanation for these differences.
+	The graph demonstrates that the rates of two curves are very similar at the very beginning, with operation cost of spin lock less than that of the mutex. However, at certain point, the cost of spin lock surpasses the mutex and keeps increasing. Meanwhile, mutex curve starts to become flat. The reason behind this is because for spin lock it will keep running and causes more CUP resources, but for mutex, it will only put a thread into sleep, which corresponding to a lower cost with more threads. 
+
+References:
+
+Generating Random Key:
+     http://stackoverflow.com/questions/33464816/c-generate-random-string-of-max-length
+     
+Clock_gettime:
+https://linux.die.net/man/3/clock_gettime
+
+Sched_yield:
+https://linux.die.net/man/2/sched_yield
+
+
+
+

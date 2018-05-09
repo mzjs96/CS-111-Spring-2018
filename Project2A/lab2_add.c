@@ -4,7 +4,7 @@
 	MZJS96@GMAIL.COM
 */
 
-
+#define _POSIX_C_SOURCE 199309L
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -238,7 +238,7 @@ int main(int argc, char** argv)
 		if(ret < 0)
 		{
 			fprintf(stderr, "Error pthread_create(): %s\n", strerror(errno));
-			exit(1);
+			exit(2);
 		}
 	}
 
@@ -248,7 +248,7 @@ int main(int argc, char** argv)
 		if(ret < 0)
 		{
 			fprintf(stderr, "Error pthread_join(): %s\n", strerror(errno));
-			exit(1);
+			exit(2);
 		}
 	}
 
