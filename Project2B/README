@@ -1,0 +1,127 @@
+README
+
+NAME: MICHAEL ZHOU
+EMAIL: mzjs96@gmail.com
+ID: 804663317
+
+This is the README file containing the information for CS111 Spring 2018 Project 2B. It includes descriptions of each of the contained files, answered questions to the spec, explanation of debugging process, and references that help me to finish this project.
+
+The tarball contains:
+
+SortedList.h: a header file describing the interfaces for linked list operations.
+
+SortedList.c: a C module that implements insert, delete, lookup, and length methods for a sorted doubly linked list.
+
+lab2_list.c: This is the C program that implements the specified command line options and produces the specified output statistics. In this lab, we added granularity locks and spins and a new --list option to specify the number of lists for testing. 
+
+Makefile:
+	build	compile the lab2_list.c program
+	default generate the lab2_list executable (compiling with the -Wall and -Wextra options)
+	tests	run all specified test cases to generate results in CSV files. 
+	graphs	use gnuplot and the supplied data reduction scripts to generate the required data for this project
+	dist	create the deliverable tarball
+	clean	delete all programs and output created by the Makefile
+	profile new option that produces the execution profiling file in order to analyze the performance of the cpu and thread function performance
+
+lab2b_list.csv:  Comma separated value file that contains the results for all of test runs
+
+profile.out: Execution profiling report showing where time was spent in the un-partitioned spin-lock implementation
+
+graphs (.png files) created by gnuplot(1) on the above csv data showing:
+	lab2b_1.png: throughput vs. number of threads for mutex and spin-lock synchronized list operations.
+	lab2b_2.png; mean time per mutex wait and mean time per operation for mutex-synchronized list operations.
+	lab2b_3.png: successful iterations vs. threads for each synchronization method.
+	lab2b_4.png: throughput vs. number of threads for mutex synchronized partitioned lists.
+	lab2b_5.png: throughput vs. number of threads for spin-lock-synchronized partitioned lists.
+
+test.sh: all the test cases written one shell script file.
+
+Answered questions:
+
+QUESTION 2.3.1 - Cycles in the basic list implementation:
+Where do you believe most of the cycles are spent in the 1 and 2-thread list tests?
+Why do you believe these to be the most expensive parts of the code?
+Where do you believe most of the time/cycles are being spent in the high-thread spin-lock tests?
+Where do you believe most of the time/cycles are being spent in the high-thread mutex tests?
+
+Answer:
+There is no one single fixed answer to this question,because we have 4 cases in total. Not all of these cases will satisfy our answer. All the cases can be identified as follow:
+	1 thread + 1 spin lock:	Most CPU operation goes to list operation.
+	1 thread + 1 list operation: List operation 
+	2 thread + spin lock: If we consider that the list is very large. Its hard to determine which thread will dominate the CPU cycles.
+	2 thread + mutex: Of course list operation if the list is large. Also, if the list is small, mutex will take longer.
+
+The most expensive part of the code is determined by the list size. If the list size is large, more cycles will be spent on the cpu cycles. Otherwise, they will be spent on the threads/ spin locks.
+
+Most of the time are being spent on the high-thread spin-lock tests will be on the waiting of locks becomes available. Meanwhile, most of the time are being spent on the high-thread mutex tests will be on the context switches as threads are blocked because the mutex they are waiting for is not available.
+
+QUESTION 2.3.2 - Execution Profiling:
+Where (what lines of code) are consuming most of the cycles when the spin-lock version of the list exerciser is run with a large number of threads?
+Why does this operation become so expensive with large numbers of threads?
+
+Answer:
+The most cycle consuming of spin-lock version of the list exerciser are:
+   626    626  151:                             while(__sync_lock_test_and_set(&my_list[bucket].lock, 1) == 1);
+
+   293    293  337:                             while(__sync_lock_test_and_set(&my_list[bucket].lock, 1) == 1);
+
+Out of the all 920 samples collected from the executing profiling data, 626+293 samples are being consumed by the the spin lock function. 
+
+This operation becomes expensive with large number of threads because only one thread can hold the lock at a time. Undoubtedly, with number of threads increasing, there will be more threads spinning and waiting for the lock.
+
+
+QUESTION 2.3.3 - Mutex Wait Time:
+Look at the average time per operation (vs. # threads) and the average wait-for-mutex time (vs. #threads).
+Why does the average lock-wait time rise so dramatically with the number of contending threads?
+Why does the completion time per operation rise (less dramatically) with the number of contending threads?
+How is it possible for the wait time per operation to go up faster (or higher) than the completion time per operation?
+
+Answer:
+
+	The average wait-for-lock time rises so dramatically with the number of contending threads because the average wait time was calculated by per thread. If there are multiple threads waiting for the same locke to be freed, the lock-time will be multiplied. Each thread calculates its own measured wait time and the total wait time will eventually be added up and dulicated with the number of threads. This explains the dramatic rise of time of operation with respect to increase threads.
+
+	The completion time per operation rises less dramatically because it is the time measured in a whole, namely, wall time. In contrast to wait-for-lock-time, which measures all the cpu cost, completion time measures multiple threads corresponding to multiple CPUs. For example, there will be overlapping of time if there are cases that threads are waiting for the same lock and the wall time measured will be less than the average wait time measured on a per thread basis.
+
+	As explained, the wait time per operation goes up faster because the time for each thread is added up, and all the CPU costs are measured. However, completion time does not rise so dramatically because it is essentially measuring the wall time, and there will be overlapping in time for operating threads measured.
+
+QUESTION 2.3.4 - Performance of Partitioned Lists
+Explain the change in performance of the synchronized methods as a function of the number of lists.
+Should the throughput continue increasing as the number of lists is further increased? If not, explain why not.
+It seems reasonable to suggest the throughput of an N-way partitioned list should be equivalent to the throughput of a single list with fewer (1/N) threads. Does this appear to be true in the above curves? If not, explain why not.
+
+Answer:
+
+	The performance of the synchronized methods increases as the number of lists increase. This is because having sublists enables us to have finer grained lock, and more threads will be able to work on the same sublist without waiting for locks. Therefore the performance will be better due to less contention.
+
+	No. The throughput will not continue increasing. To explain this scenario, think about the definition of operation of per second. In this project, our number of elements is fixed. If we are increasing number of sublists, the list size will get smaller. For example look up has complexity of o(n), there will be fewer time spending on searching the list. However, as the sublist gets finer and finer, eventually the partition of threads will reach to a saturation, in which every thread gets a sublist of only one element. At this moment, the throughout will increase to an upper bound and eventually saturate. 
+
+	Yes, in some cases it resembles the trend that throughput of N-way partitioned list should be equivalent to the throughput of a single list with fewer threads. For smaller number of threads, such as 1 or 2 threads, this is more closely related. However, the trend does not continue with more threads increasing.
+
+
+Debugging Process:
+
+After finishing writing the program and running sanity check, I noticed that I am able to pass the sanity check, but the time it takes was EXTREMELY long. As the number of threads goes higher, there will will be a significant time increase. This problem has bothered me for a long time. After checking the profile.out, I noticed that there is a significant percentage of iterations taken inside the main function, which is very strange. After a long time scrutinization, I figured out that I have written an extra for loop for assigning the key in the element list, which drastically increases the time complexity of the main function. After resolving this problem, I eventually fixed the code and now it can successfully run all the test cases, as well as the sanity check, within an acceptable waiting time.
+
+References:
+
+Gnuplot tutorial:
+	http://people.duke.edu/~hpgavin/gnuplot.html
+
+clock_gettime 
+	https://linux.die.net/man/3/clock_gettime
+
+Gperftools:
+	https://wiki.geany.org/howtos/profiling/gperftools
+
+Basis of Gnuplot:
+	http://www.phys.uconn.edu/~rozman/Courses/P2200_16F/downloads/gnuplot-introduction-2016-10-25.pdf
+
+
+
+
+
+
+
+
+
+
