@@ -1,0 +1,32 @@
+README
+
+NAME: MICHAEL ZHOU
+EMAIL: mzjs96@gmail.com
+ID: 804663317
+
+BeagleBone Serial Number: BBGW17090111
+MAC Address: 2c:f7:f1:06:69:ef
+
+This is a README file containing the tarball file description regarding to CS111 Spring 2018 Project4B submission, and the references used for finishing this project.
+
+Included files and Description:
+
+lab4b.c: The source file for an embedded application that builds and run on an embedded system. The systems functions as a temperature sensor and reads the analog input from beaglebone and outputs corresponding digital temperature. 
+
+Makefile: The file that builds and test the program.
+
+README: THe file that contains description to this project.
+
+References:
+
+	GPIO, Interrupts, Analog, and PWM:
+	https://drive.google.com/drive/folders/0B6dyEb8VXZo-N3hVcVI0UFpWSVk
+
+	Grove Temperature Sensor Data Sheet:
+	http://wiki.seeedstudio.com/Grove-Temperature_Sensor_V1.2/
+
+	Usage of fcntl:
+	http://man7.org/linux/man-pages/man2/fcntl.2.html
+
+	Usage of strncmp:
+	http://www.cplusplus.com/reference/cstring/strncmp/
