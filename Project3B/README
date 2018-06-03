@@ -1,0 +1,25 @@
+README
+
+NAME: MICHAEL ZHOU,QIAN CAO
+EMAIL: mzjs96@gmail.com,talexcao@gmail.com
+ID: 804663317,404657587
+
+This is a README file containing the tarball file description regarding to CS111 Spring 2018 Project3B submission, and the references used for finishing this project.
+
+lab3a.py:
+	This is the source file written in python that takes in an CSV file and parse it, then analyzing if there is any error or violation of the EXT2 file system.
+
+Makefile
+	This is the makefile that compiles and make program, clean directory, and create distribution tar file
+
+References:
+    The Second Extended File System Documentation File:
+        https://www.nongnu.org/ext2-doc/ext2.html#DISK-ORGANISATION
+    EXT2 file systems concept:
+        http://cs.smith.edu/~nhowe/262/oldlabs/ext2.html
+    python debugger tutorial:
+        https://docs.python.org/3/library/pdb.html
+    file I/O in pytion:
+        https://www.tutorialspoint.com/python/python_files_io.htm
+    General Python Tutorial:
+        https://www.tutorialspoint.com/python/index.html
