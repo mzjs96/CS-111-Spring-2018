@@ -6,7 +6,7 @@ ID: 804663317,404657587
 
 This is a README file containing the tarball file description regarding to CS111 Spring 2018 Project3B submission, and the references used for finishing this project.
 
-lab3a.py:
+lab3b.py:
 	This is the source file written in python that takes in an CSV file and parse it, then analyzing if there is any error or violation of the EXT2 file system.
 
 Makefile

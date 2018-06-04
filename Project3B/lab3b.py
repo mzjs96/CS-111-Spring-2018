@@ -7,13 +7,12 @@ import csv
 import string
 
 exit_status = 0
+allocated_inodes = set([])
 
 class Superblock:
     def __init__(self, row):
         self.total_block = int(row[1])
         self.total_inodes = int(row[2])
-        self.block_size = int(row[3])
-        self.inode_size = int(row[4])
         self.free_block_num = int(row[5])
         self.free_inode_num = int(row[6])
         self.first_non_reserved_inode = int(row[7])
@@ -22,29 +21,20 @@ class Inode:
     def __init__(self, row):
         self.inode_num = int(row[1])
         self.file_type = row[2]
-        self.mode = row[3]
-        self.owner = int(row[4])
         self.group = int(row[5])
         self.link_count = int(row[6])
-        self.ctime = row[7]
-        self.mtime = row[8]
-        self.atime = row[9]
-        self.file_size = int(row[10])
-        self.num_blocks = int(row[11])
         if row[2] == 's':
             self.dirent = [int(row[12])]
         else:
-            self.dirent = [int(row[i]) for i in range(12,24)]
-            self.indirect = [int(row[i]) for i in range(24,27)]
+            self.dirent = [int(row[i]) for i in range(12,24)]       #store direct inodes into a list
+            self.indirect = [int(row[i]) for i in range(24,27)]     #store indirect inode into a list
 
 
 class Dirent:
     def __init__(self, row):
         self.p_inode_num = int(row[1])
-        self.byte_offset = int(row[2])
         self.inode = int(row[3])
         self.rec_len = int(row[4])
-        self.name_len = int(row[5])
         self.name = row[6]
 
 class Indirect:
@@ -133,13 +123,15 @@ def block_consistency_audits(super_block, group, bfree, inodes, indirects):
             print("ALLOCATED BLOCK {} ON FREELIST".format(block_num))
             exit_status = 2
         elif block_num in block_dict and len(block_dict[block_num]) > 1:
+            #use len to check whether there is any duplicate in the dictionary
             for block_type, inode_num, offset in block_dict[block_num]:
                 print("DUPLICATE {} {} IN INODE {} AT OFFSET {}".format(block_type, block_num, inode_num, offset))
                 exit_status = 2
     return
 
 def inode_allocation_audits(super_block, ifree, inodes):
-    allocated_inodes = {inode.inode_num for inode in inodes}
+    for inode in inodes:
+        allocated_inodes.add(inode.inode_num)
     for inode in allocated_inodes:
         if inode in ifree:
             print("ALLOCATED INODE {} ON FREELIST".format(inode))
@@ -149,12 +141,15 @@ def inode_allocation_audits(super_block, ifree, inodes):
         if inode not in ifree and inode not in allocated_inodes:
             print("UNALLOCATED INODE {} NOT ON FREELIST".format(inode))
             exit_status = 2
-    return allocated_inodes
 
-def directory_consistency_audits(allocated_inodes, super_block, inodes, dirents):
-    link_count = [0] * (super_block.total_inodes + 1)
-    parent = [0] * (super_block.total_inodes + 1) 
-    parent [2] = 2
+def directory_consistency_audits(super_block, inodes, dirents):
+    link_count = []
+    parent = []
+    for i in range(super_block.total_inodes + 1):
+        link_count.append(0)
+        parent.append(0)
+
+    parent[2] = 2
     #inode number 2 is the root directory
     #the parent directory of the root is root itself
 
@@ -169,7 +164,8 @@ def directory_consistency_audits(allocated_inodes, super_block, inodes, dirents)
             exit_status = 2
         else:
             link_count[dirent.inode] += 1 
-            if dirent.name != "'.'" and dirent.name != "'..'":
+            if dirent.name != "'..'" and dirent.name != "'.'":
+                #save the parent inodes into the parent list
                 parent[dirent.inode] = dirent.p_inode_num
 
     for inode in inodes:
@@ -183,10 +179,10 @@ def directory_consistency_audits(allocated_inodes, super_block, inodes, dirents)
         #if dirent.name == "'..'" and dirent.p_inode_num != parent[dirent.inode]:
         if dirent.name == "'..'" and parent[dirent.p_inode_num] != dirent.inode:
             print("DIRECTORY INODE {} NAME '..' LINK TO INODE {} SHOULD BE {}".format(dirent.p_inode_num, dirent.inode, dirent.p_inode_num))
-        #I have some serious doubts about this... I dont think this is correct...
 		#What this is doing is comparing the root directory hard coded number '2' with the parent of the inode numbuer pointed by this directory
 		#It should be: if the directory name is '..', and its inode number does match the parent of the inode it is being referred to, return error.
             exit_status = 2
+    return
 
 
 def main():
@@ -201,7 +197,6 @@ def main():
     inodes = []
     dirents = []
     indirects = []
-    allocated_inodes = {}
 
     try:
         with open(sys.argv[1], 'r') as csvfile:
@@ -224,8 +219,8 @@ def main():
         sys.exit(1)
 
     block_consistency_audits(super_block, group, bfree, inodes, indirects)
-    allocated_inodes = inode_allocation_audits(super_block, ifree, inodes,)
-    directory_consistency_audits(allocated_inodes, super_block, inodes, dirents)
+    inode_allocation_audits(super_block, ifree, inodes)
+    directory_consistency_audits(super_block, inodes, dirents)
 
     sys.exit(exit_status)
 
