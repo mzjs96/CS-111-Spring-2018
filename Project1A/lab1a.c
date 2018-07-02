@@ -247,10 +247,7 @@ int main (int argc, char** argv)
 							c = buf[i];
 							if( c == '\x04')	//receive EOF ^D from keyboard
 							{
-							//if(debug_mode)
-							//	{
-							//		printf("received ^D. \n");
-							//  }
+
 								ret_status = close(to_child_pipe[1]);	//shell (POLLHUP) will be set
 								if(ret_status< 0)
 								{
@@ -260,10 +257,7 @@ int main (int argc, char** argv)
 							}
 							else if (c == '\x03')
 							{
-							//if(debug_mode)
-							//	{
-							//		printf("received ^C. \n");
-							//  }
+
 								kill(child_pid, SIGINT);
 							}
 							else if((c == '\r') || (c == '\n'))	//receive new line from keyboard
@@ -386,9 +380,6 @@ int main (int argc, char** argv)
 
 		else if( child_pid == 0 )	//this is the child
 		{
-			//CLOSE ALL UNUSED PIPES
-		//if(debug_mode)
-		//	printf("In child mode. \n");
 
 			close(to_child_pipe[1]);
 			close(from_child_pipe[0]);
@@ -415,9 +406,6 @@ int main (int argc, char** argv)
 				exit(1);
 		}
 	}
-
-	//if(debug_mode)
-	//	printf("reaches the end. \n");
 
 	exit(0);		//to prevent warning when compiling
 }
